@@ -71,8 +71,7 @@ class NN():
         K.clear_session()
         
     def getType(self):
-        return "BIN"
-        
+        return "BIN"    
        
     # This function splits the array into three seperate arrays
     def genTrainTest(self, arr):
@@ -107,9 +106,9 @@ class NN():
               epochs = 10, batch_size = 128, testAct = False, mod = '', 
               train_model = True, folder_NN_hist = "NN_Hist"):  
       
-        weight_file = os.path.join(folder_NN_hist, "BIN_weights_" + str(mod) +".h5");
-        model_file = os.path.join(folder_NN_hist, "BIN_model_" + str(mod)); 
-        hist_file = os.path.join(folder_NN_hist, "BIN_history_" + str(mod) + ".csv");
+        weight_file = os.path.join(folder_NN_hist, "BIN_weights_" + str(mod) +".h5").replace(r'\'', '/');
+        model_file = os.path.join(folder_NN_hist, "BIN_model_" + str(mod)).replace(r'\'', '/'); 
+        hist_file = os.path.join(folder_NN_hist, "BIN_history_" + str(mod) + ".csv").replace(r'\'', '/');
          
         if not testAct:
             if mod == "16qam": act1 = 'relu'; act2 = 'elu'
@@ -124,8 +123,6 @@ class NN():
     
         input_img = Input(shape=(X_train.shape[1], X_train.shape[2], 1))
     
-        model = Model(input_img, self.myNet(input_img, act1 = act1, act2 = act2, 
-                                               numClasses = Y_test.shape[1]))
         time_train_start = time.time()
         if train_model:
             #Removes previous files to prevent file creation errors
@@ -133,6 +130,9 @@ class NN():
             if os.path.exists(weight_file): os.remove(weight_file)
             if os.path.exists(model_file): os.remove(model_file)
             if os.path.exists(hist_file): os.remove(hist_file)
+
+            model = Model(input_img, self.myNet(input_img, act1 = act1, act2 = act2, 
+                                                   numClasses = Y_test.shape[1]))
             model.compile( optimizer = 'adam', loss='mean_squared_error', 
                              metrics = ['accuracy'])
             model.summary() 

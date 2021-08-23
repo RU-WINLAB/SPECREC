@@ -20,18 +20,10 @@ np.random.seed(1200)  # For reproducibility
 
 #Allows use of modules from the Common_Functions Folders
 sys.path.append('../../_Neural_Networks')
-sys.path.append('../1_ModRec_NN_Categorical')
-sys.path.append('../2_ModRec_NN_Binary')
-sys.path.append('../3_ModRec_NN_AE-STD')
-sys.path.append('../4_ModRec_NN_AE-ANOM')
-sys.path.append('../9_ModRec_NN_CNN')
-sys.path.append('../5_ModRec_NN_LSTM')
-sys.path.append('../6_Match_Filter')
-sys.path.append('../../compare_prediction_vs_actual')
-sys.path.append('../../Read_Binary_File')
+
 #imports appropriate files
 import NN_Cat_b14 as NN_CAT
-import NN_Cat_Conv_b18 as NN_CAT_CONV
+import NN_Cat_Conv_b19 as NN_CAT_CONV
 import NN_Binary_b14 as NN_BIN
 import NN_AE_STD_b14 as NN_AE
 import NN_AE_ANOM_b15 as NN_ANOM
@@ -339,16 +331,16 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
                     #gets test Data
                     glVar.mod_UT = m
                 
-                    print("Generating Training Data")                    
+                    if glVar.iter_test_dat == 0: print("Generating Training Data")                    
                     #Only generates training data if it is in a different folder
                     if glVar.NN_train == 1:
-                        print("Collecting traning data")
+                        #print("Collecting traning data")
                         train_samples = samples
                         if NNet_test == "MATCH": 
                             train_samples = 1
                             dp = glVar.num_points_train
                         else: dp = datapoints
-                        print("Number of training samples: ", train_samples)
+                        #print("Number of training samples: ", train_samples)
                         glVar.train_data = genData(glVar.folder_train, dp, train_samples, 
                             mod = m, NN_Type = NNet_test, arr_exc = glVar.exc_list_train)
                         glVar.train_y = np.asarray(glVar.mod_int)               
@@ -356,9 +348,9 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
                         train_model = True
                         glVar.train_x = glVar.train_data[i]
                     else: 
-                        print("Not training model")  
+                        #print("Not training model")  
                         train_model = False
-                        print(glVar.train_x.shape)
+                        #print(glVar.train_x.shape)
                         if glVar.train_x.shape[0] <= 1:
                             glVar.train_x = np.zeros((samples, datapoints))     
                             glVar.train_y = np.zeros((samples, 1))                
@@ -366,7 +358,7 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
 
                     
                     if glVar.iter_test_dat == 0: print("'\n'Generating Test Data")
-                    glVar.iter_test_dat += glVar.iter_test_dat
+                    glVar.iter_test_dat = glVar.iter_test_dat +1
                     glVar.test_data = genData(glVar.folder_test, datapoints, samples//2,
                         pos = datapoints*samples, mod = m, NN_Type = NNet_test, 
                         arr_exc = glVar.exc_list_test)
@@ -578,7 +570,7 @@ def main(options=None):
         glVar.folder_test = f 
         if not glVar.sep_train_test: glVar.folder_train = f
         if glVar.sep_train_test and glVar.iter_f > 1: glVar.NN_train = 0
-        print("\nTest Data: ", glVar.folder_test) 
+        #print("\nTest Data: ", glVar.folder_test) 
         """"""                
         runTest(glVar.dateCode, datapoints = options.num_points, 
         samples = options.samples, num_iter = options.iter, 

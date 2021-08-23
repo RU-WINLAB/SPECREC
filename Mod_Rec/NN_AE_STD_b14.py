@@ -93,18 +93,15 @@ class NN():
               epochs = 10, batch_size = 128, testAct = False, mod = '',
               train_model = True, folder_NN_hist = "NN_Hist"):   
      
-        weight_file = os.path.join(folder_NN_hist, "AE_weights.h5"); 
-        model_file = os.path.join(folder_NN_hist, "AE_model"); 
-        hist_file = os.path.join(folder_NN_hist, "AE_history.csv");
+        # weight_file = os.path.join(folder_NN_hist, "AE_weights.h5").replace(r'\'', '/'); 
+        # model_file = os.path.join(folder_NN_hist, "AE_model").replace(r'\'', '/'); 
+        # hist_file = os.path.join(folder_NN_hist, "AE_history.csv").replace(r'\'', '/');
+        
+        weight_file = os.path.join(folder_NN_hist, "AE_weights.h5").replace(r'\'', '/'); 
+        model_file = os.path.join(folder_NN_hist, "AE_model").replace(r'\'', '/'); 
+        hist_file = os.path.join(folder_NN_hist, "AE_history.csv").replace(r'\'', '/');
         
         if not testAct: act1 = "elu"; act2 = "softmax" 
-        #Normalizes all inputs
-        X_train = X_train/np.max(X_train)
-        X_test = X_test/np.max(X_test)
-        X_val = X_val/np.max(X_val)
-        Y_train = Y_train/np.max(Y_train)
-        Y_test = Y_test/np.max(Y_test)
-        Y_val = Y_val/np.max(Y_val)
 
         #numClasses = Y_train.shape[1]
         inChannel = 1
@@ -186,7 +183,7 @@ def test():
     a, b, c = NNet.genTrainTest(x)
     a1, b1, c1 = NNet.genTrainTest(y)
     #NNet.runAutoencoder(a, a, b, b)
-    NNet.runNN(a, a1, b, b1, c, c1, train_model = False)
+    NNet.runNN(a, a1, b, b1, c, c1, train_model = True)
 
 #%% Testing Autoencoder alone
 if __name__ == '__main__':

@@ -64,12 +64,29 @@ class NN():
     #Main Neural Network
     def NN_CONV(self, data, act1 = "elu", act2 = "softmax", numClasses = 2):   
         hidden = data
-        hidden = Conv2D(32, (3, 3), activation = act1, padding='same')(hidden) 
+        # hidden = Conv2D(128, (3, 3), activation = act1, padding='same')(hidden)  # 7 x 7 x 128
+        # hidden = UpSampling2D((1))(hidden)  # 14 x 14 x 128
+        # hidden = Conv2D(64, (3, 3), activation = act1, padding='same')(hidden)  # 14 x 14 x 64
+        # hidden = UpSampling2D((1, 2))(hidden)  # 28 x 28 x 64
+        hidden = Conv2D(32, (3, 3), activation = act1, padding='same')(hidden)  # 14 x 14 x 64
+        hidden = UpSampling2D((1, 2))(hidden)  # 28 x 28 x 64
+        hidden = Conv2D(16, (3, 3), activation = act1, padding='same')(hidden)  # 14 x 14 x 64
+        hidden = UpSampling2D((1, 2))(hidden)  # 28 x 28 x 64
+        hidden = Conv2D(8, (3, 3), activation = act1, padding='same')(hidden)  # 14 x 14 x 64
+        hidden = UpSampling2D((1, 2))(hidden)  # 28 x 28 x 64
+        hidden = Conv2D(8, (3, 3), activation = act1, padding='same')(hidden)  # 28 x 28 x 32
+        hidden = MaxPooling2D(pool_size=(1, 2))(hidden)  # 14 x 14 x 32
+        hidden = Conv2D(16, (3, 3), activation = act1, padding='same')(hidden)  # 28 x 28 x 32
+        hidden = MaxPooling2D(pool_size=(1, 2))(hidden)  # 14 x 14 x 32
+        hidden = Conv2D(32, (3, 3), activation = act1, padding='same')(hidden)  # 28 x 28 x 32
+        hidden = MaxPooling2D(pool_size=(1, 2))(hidden)  # 14 x 14 x 32
+        # hidden = Conv2D(64, (3, 3), activation = act1, padding='same')(hidden)  # 14 x 14 x 64
+        # hidden = MaxPooling2D(pool_size=(1, 2))(hidden)  # 7 x 7 x 64
+        # hidden = Conv2D(128, (3, 3), activation = act1, padding='same')(hidden)  # 7 x 7 x 128 (small and thick)
+        # hidden = Conv2D(numClasses, (3, 3), activation= act2, padding='same')(hidden)  # 28 x 28 x 1
         hidden = UpSampling2D((1))(hidden)  
-        hidden = Conv2D(numClasses, (3, 3), activation= act2, padding='same')(hidden)  
-        hidden = Flatten()(hidden)
         hidden = Dropout(0.2)(hidden) 
-        #hidden = Flatten()(hidden)
+        hidden = Flatten()(hidden)
         hidden = Dense(512, activation = "relu")(hidden)
         hidden = Dense(256, activation = "relu")(hidden)
         output = Dense(numClasses, activation = act2)(hidden)
@@ -82,9 +99,9 @@ class NN():
               epochs = 10, batch_size = 128, testAct = False, mod = '', NN_layers = "CONV",               
               train_model = True, test_model = True, folder_NN_hist = "NN_Hist"):
 
-        weight_file = os.path.join(folder_NN_hist, "CONV_weights.h5"); 
-        model_file = os.path.join(folder_NN_hist, "CONV_model"); 
-        hist_file = os.path.join(folder_NN_hist, "CONV_history.csv");
+        weight_file = os.path.join(folder_NN_hist, "CONV_weights.h5").replace(r'\'', '/');
+        model_file = os.path.join(folder_NN_hist, "CONV_model").replace(r'\'', '/'); 
+        hist_file = os.path.join(folder_NN_hist, "CONV_history.csv").replace(r'\'', '/');
         
         if not testAct and NN_layers == "FC":
              act1 = "softplus"  
@@ -135,6 +152,8 @@ class NN():
         time_train = np.round(time.time() - time_train_start, 2)
         
         if test_model:
+            # print("Weight_file: ", weight_file)
+            # print("Model_file: ", model_file)
             time_test_start = time.time()
             score = model.evaluate(X_test, Y_test, verbose=1)
             #Gets and outputsS predciton of each class
@@ -147,8 +166,8 @@ class NN():
 
         #print("Data shape: ", x.shape)
         print("Train Data Shape: ", X_train.shape)
-        print("Accuracy ", score[1])
-        print("Loss: ", score[0], '\n')
+        print("Loss: ", score[0])
+        print( '\n', "Accuracy ", score[1])
         #print("NN Time: ", time_test + time_train)
 
         #Validation loss is taken as the final value in the array of validation loss in the training data
