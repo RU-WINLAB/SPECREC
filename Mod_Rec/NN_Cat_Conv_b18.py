@@ -100,7 +100,9 @@ class NN():
               train_model = True, test_model = True, folder_NN_hist = "NN_Hist"):
 
         weight_file = os.path.join(folder_NN_hist, "CONV_weights.h5").replace(r'\'', '/');
+        print("Weight_file: ", weight_file)
         model_file = os.path.join(folder_NN_hist, "CONV_model").replace(r'\'', '/'); 
+        print("Model_file: ", model_file)
         hist_file = os.path.join(folder_NN_hist, "CONV_history.csv").replace(r'\'', '/');
         
         if not testAct and NN_layers == "FC":
@@ -152,8 +154,8 @@ class NN():
         time_train = np.round(time.time() - time_train_start, 2)
         
         if test_model:
-            # print("Weight_file: ", weight_file)
-            # print("Model_file: ", model_file)
+            print("Weight_file: ", weight_file)
+            print("Model_file: ", model_file)
             time_test_start = time.time()
             score = model.evaluate(X_test, Y_test, verbose=1)
             #Gets and outputsS predciton of each class
@@ -205,4 +207,3 @@ if __name__ == '__main__':
         test()
 
 
-    

@@ -18,12 +18,13 @@ class glVar():
     temp = None
     temp1 = 0
     myDict = {}
-    mag = []
+    mag = np.array([])
     pred_mod = np.array([])
     pred_stat = np.array([])
     printData = False
 #%%
 def generateData(path = "samples", num_points = 1000, samples = 1, posStart = 0):
+    if not os.path.exists(path): os.makedirs(path)
     sig_mod  = np.empty([0, 1])
     sig_data  = np.empty([0, num_points])
     for fname in os.listdir(path):
@@ -72,26 +73,27 @@ class NN():
         
     def correlateTest(self, sig_filters = "", sig_types = [],  sig_test = "",
                       sig_type = ""):
-        sig_filters = sig_filters/np.max(sig_filters)
+        #Normalizez filter data.  
+        sig_filters = sig_filters/np.max(sig_filters) 
+        #Initializes an np array for the complex test signal
         sig_complex = np.full((sig_filters.shape[0], int(sig_test.shape[1]/2)), 0+0j) 
         glVar.pred_mod = np.array([])
+        glVar.mag = np.array([])
         glVar.pred_stat = np.array([])
         glVar.mag = []
-        glVar.temp = sig_test
         for sig, mod in zip(sig_test, sig_type):
             #normalizes signal
             #sig = (sig - np.min(sig))/(np.max(sig)- np.min(sig))
-            #glVar.temp1 = sig
             sig_complex[sig_complex.shape[0]-1][:] = sig[0::2] + 1j*sig[1::2]
+            #Convolves the filter with test signal (MATCH FILTER)
             sig_corr = signal.correlate(sig_filters, sig_complex, mode='full')
-            #plt.plot(sig_corr[2])
-            glVar.temp = sig_corr
-            if os.path.exists(mod+'.csv'): os.remove(mod+'.csv')
+            #if os.path.exists(mod+'.csv'): os.remove(mod+'.csv')
             # np.savetxt(mod+'.csv',sig_corr, delimiter=',')
-            mag = np.max(sig_corr, axis=1)
-            #glVar.mag.append(mag)
+            mag = np.max(abs(sig_corr), axis=1)
+            #print("MAG: ", mag)
             #argmax returns the location of the array component with the max value
             pred = sig_types[np.argmax(mag)]
+            glVar.mag = np.append(glVar.mag, max(mag))
             glVar.pred_mod = np.append(glVar.pred_mod, pred)
             glVar.pred_stat = np.append(glVar.pred_stat, int(pred == mod))
             #plt.plot(sig[0::2], sig[1::2], "*")
@@ -118,7 +120,7 @@ class NN():
             if os.path.exists(file_IQ): os.remove(file_IQ)
             if os.path.exists(file_IQ_Complex): os.remove(file_IQ_Complex)
             if os.path.exists(file_match_info): os.remove(file_match_info)
-
+            #Writes values to the file_IQ
             with open(file_IQ_Complex, "a") as f:
                 for i in X_train:
                     #i= (i - np.min(i))/(np.max(i)- np.min(i))
@@ -178,17 +180,18 @@ def test():
     NNet = NN()
     NNet.__init__
 
-    X_train, Y_train_label = generateData(num_points = 1000, samples = 1)              
-    X_test, Y_test_label = generateData(num_points = 1000, samples = 1)
+    X_train, Y_train_label = generateData(path = 'Data/mod_test2/snr30', num_points = 250, samples = 1)              
+    X_test, Y_test_label = generateData(path = 'Data/mod_test2/snr20', num_points = 1000, samples = 10)
     #X_train = normalize(X_train, axis = 1, norm = 'l1')
     #X_test = normalize(X_train, axis = 1, norm = 'l1')
     #X_test = X_test.reshape(-1, 1, X_test.shape[1], 1)/np.max(X_test)
     NNet.runNN(X_train=X_train, Y_train_label=Y_train_label, X_test=X_test, 
                 Y_test_label=Y_test_label, X_val=0, Y_val=0, Y_train = 0, Y_test = 0)
-    #glVar.temp1 = Y_test_label
     #subplot_data((glVar.temp))
+    glVar.temp = Y_test_label
     return 0
 
 if __name__ ==  '__main__':
     #glVar.printData = True
     y = test()
+

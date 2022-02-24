@@ -20,10 +20,18 @@ np.random.seed(1200)  # For reproducibility
 
 #Allows use of modules from the Common_Functions Folders
 sys.path.append('../../_Neural_Networks')
-
+sys.path.append('../1_ModRec_NN_Categorical')
+sys.path.append('../2_ModRec_NN_Binary')
+sys.path.append('../3_ModRec_NN_AE-STD')
+sys.path.append('../4_ModRec_NN_AE-ANOM')
+sys.path.append('../9_ModRec_NN_CNN')
+sys.path.append('../5_ModRec_NN_LSTM')
+sys.path.append('../6_Match_Filter')
+sys.path.append('../../compare_prediction_vs_actual')
+sys.path.append('../../Read_Binary_File')
 #imports appropriate files
 import NN_Cat_b14 as NN_CAT
-import NN_Cat_Conv_b19 as NN_CAT_CONV
+import NN_Cat_Conv_b18 as NN_CAT_CONV
 import NN_Binary_b14 as NN_BIN
 import NN_AE_STD_b14 as NN_AE
 import NN_AE_ANOM_b15 as NN_ANOM
