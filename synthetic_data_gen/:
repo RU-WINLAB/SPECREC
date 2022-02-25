@@ -1,0 +1,163 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Dec 21 11:45:56 2020
+@author: TINA
+Program to make several plots based on data and user requests
+"""
+
+
+#%% imports the appropriate libraries
+#!/usr/bin/env python3
+import numpy as np, signal, sys, pandas as pd, os
+import matplotlib.pyplot as plt
+from argparse import ArgumentParser
+from scipy import stats
+
+#%% Setups up global variables
+class glVar:
+    temp = None
+    dir_data = ""
+    bin_info = None
+    
+#%% Parses user input
+def argument_parser():
+    parser = ArgumentParser()
+    parser.add_argument( 
+        "--files-test", dest="files_test", type=str, nargs = '+',
+        default= [""],
+        help="Sets the training data folder location [default=%(default)r]")    
+    parser.add_argument(
+        "--samples", dest="samples", type=int, 
+        default= 1000,
+        help="Number of samples to collect [default=%(default)r]")
+    parser.add_argument(
+        "--offset", dest="offset", type=int, 
+        default= 0,
+        help="Offset [default=%(default)r]")
+    parser.add_argument(
+        "--plot-types", dest="plot_types", type=str, nargs='+', 
+        default= ["MAG", "PSD", "IQ"],
+        help='''Enter the list of plots to be created. \n
+        MAG --> Magnitude vs Time \n
+        PSD --> Power Spectral Density \n
+        IQ --> IQ \n'''
+        )
+    parser.add_argument(
+        "--data-type", dest="data_type", type=str, 
+        default= "float32",
+        help='''Sets the data type  [default=%(default)r]
+        int8 --> 8 bit signed integar '\n'
+        int16 --> 16 bit signed integar '\n'
+        int32 --> 32 bit signed integar '\n'
+        int64 --> 64 bit signed integar '\n'
+        uint8 --> 8 bit unsigned integar '\n'
+        uint16 --> 16 bit unsigned integar '\n'
+        uint32 --> 32 bit unsigned integar '\n'
+        uint64 --> 64 bit unsigned integar '\n'        
+        float32 --> 32 bit floating point number '\n'
+        float64 --> 64 bit floating point number '\n'
+        ''')
+    parser.add_argument(
+        "--plot-show", dest="plot_show", type=int, 
+        default= 1,
+        help='''Indicate whether or not you want to show the plot 
+        0 --> Yes, 1 --> No
+        [default=%(default)r]''')
+    parser.add_argument(
+        "--plot-save", dest="plot_save", type=int, 
+        default= 1,
+        help='''Indicate whether or not you want to save the plot 
+        0 --> Yes, 1 --> No
+        [default=%(default)r]''')
+    return parser
+#%%
+def read_binary_iq(filename, count=1000, d_type = "int16", offset = 0, **kwargs):         
+    if d_type == "int8": data_type = np.int8;
+    elif d_type == "int16": data_type = np.int16;
+    elif d_type == "int32": data_type = np.int32;
+    elif d_type == "int64": data_type = np.int64;
+    elif d_type == "uint8": data_type = np.uint8;
+    elif d_type == "uint16": data_type = np.uint16;
+    elif d_type == "uint32": data_type = np.uint32;
+    elif d_type == "uint64": data_type = np.uint64;
+    elif d_type == "float32": data_type = np.float32;
+    elif d_type == "float64": data_type = np.float64; 
+    else: data_type = np.float32
+    
+    with open(filename, 'rb') as f:
+        f.seek(offset)    
+        data = np.fromfile(filename, dtype=data_type, count = count, **kwargs)
+    #data = data[100:]
+    f.close()
+    glVar.temp = data
+    #data = np.array(data/np.max(np.abs(data)), dtype = int)
+    dataiq = ((data[0::2] + data[1::2]*1j).astype(np.complex))
+    #print(data)
+    return data, dataiq
+#%%
+def get_filelist_from_directory(loc_data):
+    data = []
+    for root, dirs, files in os.walk(loc_data):
+        for f in files:
+            data.append((root + "/" + f).replace("\\", "/").replace("//", "/"))
+    return data
+#%% Creates plot for IQ values based on user input
+def plot_data(data, plot_types = ["IQ"], plot_name = "", plot_save = 1, plot_show = 1):
+    i = 0
+    for plot_type in plot_types:
+        i = i+1
+        plt.clf()
+        plt.figure(i)
+        if plot_type.upper() == "IQ": 
+            I = data[0::2]; 
+            Q = data[1::2];
+            div = int(len(I)/4)
+            glVar.temp = div
+            plt.plot(I[0:div], Q[0:div], '*b');
+            plt.plot(I[div+1:2*div], Q[div+1:2*div], '*k');
+            plt.plot(I[2*div+1:3*div], Q[2*div+1:3*div], '*r');
+            plt.plot(I[3*div+1:4*div], Q[3*div+1:4*div], '*g');
+            plt.xlabel("I"); 
+            plt.ylabel("Q")
+        elif plot_type.upper() == "MAG": 
+            plt.plot(abs(data)); 
+            plt.xlabel("Time"); 
+            plt.ylabel("Magnitude")
+        elif plot_type.upper() == "PSD": 
+            plt.psd((data[0::2] + data[1::2]*1j).astype(np.complex),
+                                         NFFT=1024, Fs=10000)    
+        else: plt.plot(data)
+    
+        if not os.path.exists("Data/Plots"): os.makedirs("Data/Plots")    
+        plt.title(plot_type)
+        if plot_save == 1: plt.savefig("Data/Plots/" + plot_name+"_"+plot_type); print("Saving " + plot_name)
+        if plot_show == 1: plt.show()
+    return 0
+
+#%%Main program
+def main(options = None):
+    if options is None:
+        options = argument_parser().parse_args()        
+    
+    def sig_handler(sig=None, frame=None):
+        sys.exit(0)
+    #samples = 1000
+    signal.signal(signal.SIGINT, sig_handler)
+    signal.signal(signal.SIGTERM, sig_handler)
+    
+    for i in options.files_test: 
+        if os.path.isdir(i): file_list = get_filelist_from_directory(i)
+        else: file_list = [i]
+        
+        for file_test in file_list: 
+            file_name = os.path.basename(file_test).split('.')
+            data, data_complex = read_binary_iq(filename = file_test, count =options.samples,
+                d_type = options.data_type.lower(), offset = options.offset)
+            plot_data(data = data, plot_types = options.plot_types, plot_name = file_name[0], 
+                      plot_show = options.plot_show, plot_save = options.plot_save)
+    return 0
+
+#%%
+if __name__ == '__main__':
+    main()
+

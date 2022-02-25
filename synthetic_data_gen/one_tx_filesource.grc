@@ -1,0 +1,300 @@
+options:
+  parameters:
+    author: root
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: hb
+    hier_block_src_path: '.:'
+    id: one_tx_filesource
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: run
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Modulation tx filesource
+    window_size: ''
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 9]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: mod_index
+  id: variable
+  parameters:
+    comment: ''
+    value: 0 if modulation == "bpsk" else 1 if modulation == "cpm" else 2 if modulation
+      == "gmsk" else 3 if modulation == "qpsk" else 4 if modulation == "16qam" else
+      5
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1258, 30]
+    rotation: 0
+    state: true
+- name: blocks_selector_0
+  id: blocks_selector
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    enabled: 'True'
+    input_index: mod_index
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '6'
+    num_outputs: '1'
+    output_index: '0'
+    showports: 'True'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [612, 384]
+    rotation: 0
+    state: true
+- name: modulation
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: Modulation type ('bpsk', 'cpm', 'gmsk', 'qpsk', '16qam', 8psk')
+    short_id: ''
+    type: str
+    value: bpsk
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [900, 16]
+    rotation: 0
+    state: true
+- name: pad_sink_0
+  id: pad_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    label: out
+    num_streams: '1'
+    optional: 'False'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [929, 475]
+    rotation: 0
+    state: true
+- name: samp_rate
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: Base Sampling Rate
+    short_id: ''
+    type: eng_float
+    value: 20e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [255, 16]
+    rotation: 0
+    state: true
+- name: sig_bw
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: Bandwidth of the Signal
+    short_id: ''
+    type: eng_float
+    value: 4e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [682, 12]
+    rotation: 0
+    state: true
+- name: sig_freq
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: Central Frequency of the Signal
+    short_id: ''
+    type: eng_float
+    value: 7e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [463, 20]
+    rotation: 0
+    state: true
+- name: signal_16qam_filesource_0
+  id: signal_16qam_filesource
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset_freq: sig_freq
+    samp_rate: samp_rate
+    signal_bandwidth: sig_bw
+    source_file: sourcefile
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [114, 657]
+    rotation: 0
+    state: true
+- name: signal_8psk_filesource_0
+  id: signal_8psk_filesource
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset_freq: sig_freq
+    samp_rate: samp_rate
+    signal_bandwidth: sig_bw
+    source_file: sourcefile
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [114, 769]
+    rotation: 0
+    state: true
+- name: signal_QPSK_filesource_0
+  id: signal_QPSK_filesource
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset_freq: sig_freq
+    samp_rate: samp_rate
+    signal_bandwidth: sig_bw
+    source_file: sourcefile
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [118, 549]
+    rotation: 0
+    state: true
+- name: signal_bpsk_filesource_0
+  id: signal_bpsk_filesource
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset_freq: sig_freq
+    samp_rate: samp_rate
+    signal_bandwidth: sig_bw
+    source_file: sourcefile
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [116, 226]
+    rotation: 0
+    state: true
+- name: signal_cpm_filesource_0
+  id: signal_cpm_filesource
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset_freq: sig_freq
+    samp_rate: samp_rate
+    signal_bandwidth: sig_bw
+    source_file: sourcefile
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [103, 331]
+    rotation: 0
+    state: true
+- name: signal_gmsk_filesource_0
+  id: signal_gmsk_filesource
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset_freq: sig_freq
+    samp_rate: samp_rate
+    signal_bandwidth: sig_bw
+    source_file: sourcefile
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [103, 445]
+    rotation: 0
+    state: true
+- name: sourcefile
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: Source File Name
+    short_id: ''
+    type: str
+    value: source.bin
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1083, 14]
+    rotation: 0
+    state: true
+
+connections:
+- [blocks_selector_0, '0', pad_sink_0, '0']
+- [signal_16qam_filesource_0, '0', blocks_selector_0, '4']
+- [signal_8psk_filesource_0, '0', blocks_selector_0, '5']
+- [signal_QPSK_filesource_0, '0', blocks_selector_0, '3']
+- [signal_bpsk_filesource_0, '0', blocks_selector_0, '0']
+- [signal_cpm_filesource_0, '0', blocks_selector_0, '1']
+- [signal_gmsk_filesource_0, '0', blocks_selector_0, '2']
+
+metadata:
+  file_format: 1
