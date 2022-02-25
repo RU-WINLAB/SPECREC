@@ -1,38 +1,38 @@
 # SPECREC
 
-################################################################################################################################################################
+################################################################################################################################################################<br />
 
 This repository is for code used to evaluate various neural networks for the purpose of modulation recognition.  All tests were perfomed in association with WINLAB and Rutgers University. The research was performed between 2019 and 2022.    
 
-################################################################################################################################################################
+################################################################################################################################################################<br />
 
-The results from this project are discussed in the following publications:
+The results from this project are discussed in the following publications: <br />
 
-1) Burns, Tina, L., et. al. "Evaluating Deep Learning Networks for Modulation Recognition ". IEEE International Symposium on Dynamic Spectrum Access Networks (DYSPAN). Dec. 2021
-2) Burns, Tina, L., et. al. "Synthetic Wireless Signal Generation for Neural Network Algorithms". IEEE Conference on Standards for Communications and Networking (CSCN). Dec. 2021 
+1) Burns, Tina, L., et. al. "Evaluating Deep Learning Networks for Modulation Recognition ". IEEE International Symposium on Dynamic Spectrum Access Networks (DYSPAN). Dec. 2021 <br />
+2) Burns, Tina, L., et. al. "Synthetic Wireless Signal Generation for Neural Network Algorithms". IEEE Conference on Standards for Communications and Networking (CSCN). Dec. 2021 <br />
 
-################################################################################################################################################################
+################################################################################################################################################################ <br />
 
-The contributors to this project include:
-Tina L. Burns
-Richard P. Martin
-Jorge Ortiz
-Ivan Seskar
-Dragoslav Stojadinovic
-Ryan Davis
-Miguel Camelo
+The contributors to this project include:<br />
+Tina L. Burns <br />
+Richard P. Martin <br />
+Jorge Ortiz <br />
+Ivan Seskar <br />
+Dragoslav Stojadinovic <br />
+Ryan Davis <br />
+Miguel Camelo <br />
 
-################################################################################################################################################################
+################################################################################################################################################################ <br />
 
-A description of the folders and their contents is shown below:
+A description of the folders and their contents is shown below: <br />
 
-NN_Mod_Rec
-Contains code for the nueral networks.  Most of the script are python files.  t
+NN_Mod_Rec <br />
+Contains code for the nueral networks.  Most of the script are python files. <br />
 
-Test_Automation
-Contains the code used to automate the tests or data generation of the project.  
+Test_Automation <br />
+Contains the code used to automate the tests or data generation of the project.  <br />
 
-synthetic_data_gen
-Contains code for the generation synthetic data. This folder is comprised of a combination of Python and GNU Radio files. 
+synthetic_data_gen <br />
+Contains code for the generation synthetic data. This folder is comprised of a combination of Python and GNU Radio files.  <br />
 
-################################################################################################################################################################
+################################################################################################################################################################ <br />
