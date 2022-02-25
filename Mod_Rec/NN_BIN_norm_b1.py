@@ -71,7 +71,7 @@ class NN():
         K.clear_session()
         
     def getType(self):
-        return "BIN"    
+        return "BIN Normalized"    
        
     # This function splits the array into three seperate arrays
     def genTrainTest(self, arr):
@@ -91,10 +91,10 @@ class NN():
         """"""
         # input = 28 x 28 x 1 (wide and thin)
         hidden1 = Flatten()(data)
-        hidden1 = Dense(400, activation= act1)(hidden1)
-        hidden1 = Dense(200, activation= act1)(hidden1)
-        hidden1 = Dense(100, activation= act1)(hidden1)
-        hidden1 = Dense(50, activation= act1)(hidden1)
+        hidden1 = Dense(12, activation= act1)(hidden1)
+        hidden1 = Dense(8, activation= act1)(hidden1)
+        #hidden1 = Dense(16, activation= act1)(hidden1)
+        #hidden1 = Dense(8, activation= act1)(hidden1)
         hidden1 = Dropout(0.2)(hidden1)
         hidden1 = Dense(numClasses, activation=act2)(hidden1)
         return hidden1

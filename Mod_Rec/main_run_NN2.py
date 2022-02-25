@@ -20,24 +20,23 @@ np.random.seed(1200)  # For reproducibility
 
 #Allows use of modules from the Common_Functions Folders
 sys.path.append('../../_Neural_Networks')
-sys.path.append('../1_ModRec_NN_Categorical')
-sys.path.append('../2_ModRec_NN_Binary')
-sys.path.append('../3_ModRec_NN_AE-STD')
-sys.path.append('../4_ModRec_NN_AE-ANOM')
-sys.path.append('../9_ModRec_NN_CNN')
-sys.path.append('../5_ModRec_NN_LSTM')
-sys.path.append('../6_Match_Filter')
-sys.path.append('../../compare_prediction_vs_actual')
-sys.path.append('../../Read_Binary_File')
-#imports appropriate files
-import NN_Cat_b14 as NN_CAT
-import NN_Cat_Conv_b18 as NN_CAT_CONV
-import NN_Binary_b14 as NN_BIN
-import NN_AE_STD_b14 as NN_AE
-import NN_AE_ANOM_b15 as NN_ANOM
-import NN_LSTM_b7 as NN_LSTM
+
+#FILE IMPORTS
+# Imports standard NN files
+import NN_FCNN_b14 as NN_CAT
+import NN_CNN_b19 as NN_CAT_CONV
+import NN_BIN_b14 as NN_BIN
+import NN_AE_b14 as NN_AE
+import NN_ANOM_b15 as NN_ANOM
+import NN_LSTM_64L as NN_LSTM
 import NN_Simple_b3 as NN_SIMPLE
-import NN_matched_filter_b11 as MATCH
+import NN_matched_filter_b13 as MATCH
+# Imports "normalized"NN files
+import NN_FCNN_norm_b1 as NN_CAT_2
+import NN_CNN_norm_b1 as NN_CAT_CONV_2
+import NN_BIN_norm_b1 as NN_BIN_2
+import NN_AE_norm_b1 as NN_AE_2
+# Imports additional files
 import compare_prediction_actual_r4 as conf_mat
 import read_binary_r1 as read_binary_file
 import warnings                                                                                                                
@@ -124,11 +123,15 @@ def argument_parser():
         default= ["CAT", "CONV", "LSTM", "BIN", "ANOM",  "AE"],
         help='''Enter the list of nueral networks to be tested. \n
         BIN --> Binary Classifier \n
-        CAT --> Categorical \n
-        CONV --> Convolutional \n
+        FCN --> Fully Connected \n
+        CNN --> Convolutional \n
         AE --> Autoencoder \n
         AMOM --> Anomaly Detector \n
         SIMP--> Simple \n
+        BIN --> Binary Classifier \n
+        FCN2 --> Normalized Fully Connected  \n
+        CNN2 --> Normalized Convolutional \n
+        AE2 --> Normalized Autoencoder \n
         Options [default=%(default)r]'''
         )
     parser.add_argument(
@@ -260,12 +263,11 @@ def getExclusionList(range_param  = "s1_sinr", range_arr = [-1000, 1000], exc_pa
     arr = []
     #Makes all values in exculsion column lower case
     glVar.testData[exc_param] = glVar.testData[exc_param].str.lower() 
-    for mod in exc_arr:
-        arr = arr + list(glVar.testData["filename"][glVar.testData[exc_param] == mod.lower()])
+    for exc in exc_arr:
+        arr = arr + list(glVar.testData["filename"][glVar.testData[exc_param] == exc.lower()])
     #print([glVar.testData[range_param] >= range_arr[0]])
     arr = arr + list(glVar.testData["filename"][glVar.testData[range_param] < range_arr[0]])
     arr = arr + list(glVar.testData["filename"][glVar.testData[range_param] > range_arr[1]])
-
     #print("making exclusion list")
     return arr
 #%%
@@ -311,13 +313,17 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
     dataArr = ["IQ_pair"]
     for NNet_test in glVar.NNets:
         if NNet_test == "ANOM": NNet = NN_ANOM.NN()
-        elif NNet_test == "CAT": NNet = NN_CAT.NN()
-        elif NNet_test == "CONV": NNet = NN_CAT_CONV.NN()
-        elif NNet_test == "BIN": NNet = NN_BIN.NN()
-        elif NNet_test == "AE": NNet = NN_AE.NN()
-        elif NNet_test == "LSTM": NNet = NN_LSTM.NN()
-        elif NNet_test == "SIMPLE": NNet = NN_SIMPLE.NN()
-        elif NNet_test == "MATCH": NNet = MATCH.NN()
+        elif NNet_test.upper() == "FCN": NNet = NN_CAT.NN()
+        elif NNet_test.upper() == "CNN": NNet = NN_CAT_CONV.NN()
+        elif NNet_test.upper() == "BIN": NNet = NN_BIN.NN()
+        elif NNet_test.upper() == "AE": NNet = NN_AE.NN()
+        elif NNet_test.upper() == "LSTM": NNet = NN_LSTM.NN()
+        elif NNet_test.upper() == "SIMPLE": NNet = NN_SIMPLE.NN()
+        elif NNet_test.upper() == "MATCH": NNet = MATCH.NN()
+        elif NNet_test.upper() == "FCN2": NNet = NN_CAT_2.NN()
+        elif NNet_test.upper() == "CNN2": NNet = NN_CAT_CONV_2.NN()
+        elif NNet_test.upper() == "BIN2": NNet = NN_BIN_2.NN()
+        elif NNet_test.upper() == "AE2": NNet = NN_AE_2.NN()
         else: NNet = NN_CAT.NN()
         
         glVar.NN_type = NNet.getType()    
@@ -478,13 +484,20 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
                                 print("Time of NN: ", time_NN)
                                 print(glVar.col_param, np.round(np.mean(glVar.param_value), 2))
                                 print( " Activation 1:  " + af1 + " Activation 2:  " + af2)
-                                
-                                if options.conf_mat: conf_mat.main(y_pred = glVar.pred, y_true = glVar.test_y,
+                                if options.conf_mat: 
+                                    #Sets up prediction array as a categorical array
+                                    glVar.temp1 = glVar.pred
+                                    if glVar.NN_type == "MATCH": 
+                                        labels = pd.get_dummies(glVar.pred).columns.tolist()
+                                        glVar.pred =  np.asarray(pd.get_dummies(glVar.pred).values)
+                                    else: labels = list(glVar.mod_list.columns.values)
+                                    conf_mat.main(y_pred = glVar.pred, y_true = glVar.test_y,
                                         #Gets a list of modulation types that aligns with binary array 
-                                        labels_text = list(glVar.mod_list.columns.values), 
+                                        labels_text = labels, 
                                         myFolder = "Data/Results/", 
                                         myFile =glVar.dateCode + "_" + os.path.basename(glVar.folder_test) + "_"
                                         + glVar.NN_type)
+                                    glVar.temp = labels
  
 #%% Gets list of folders to be tested 
 def getFolderList(loc_data):
@@ -555,10 +568,13 @@ def main(options=None):
     #Gets list of files to exclude from the training and test data
     #options.range_train = list(np.asarray(options.range_train).astype(float))
     #options.range_test = list(np.asarray(options.range_test).astype(float))
-    glVar.exc_list_train = getExclusionList(range_param = options.range_param, range_arr = options.range_train, 
-                                exc_param = options.exc_param, exc_arr = options.exc_train)
-    glVar.exc_list_test = getExclusionList(range_param = options.range_param, range_arr = options.range_test, 
-                                exc_param = options.exc_param, exc_arr = options.exc_test)
+    # glVar.exc_list_train = getExclusionList(range_param = options.range_param, range_arr = options.range_train, 
+    #                             exc_param = options.exc_param, exc_arr = options.exc_train)
+    # glVar.exc_list_test = getExclusionList(range_param = options.range_param, range_arr = options.range_test, 
+    #                             exc_param = options.exc_param, exc_arr = options.exc_test)
+    
+    glVar.exc_list_test = []
+    glVar.exc_list_train = []
     
     #Fuction to return a boolean value
     #Code from:
