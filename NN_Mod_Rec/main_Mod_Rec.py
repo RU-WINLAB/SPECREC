@@ -134,7 +134,7 @@ def argument_parser():
         FCN2 --> Normalized Fully Connected  \n
         CNN2 --> Normalized Convolutional \n
         AE2 --> Normalized Autoencoder \n
-        LSTM2 --> LSTM with 32 filters  \n
+        LSTM2 --> LSTM with 64 filters  \n
         Options [default=%(default)r]'''
         )
     parser.add_argument(
@@ -399,7 +399,7 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
                     # Reshapes the data so that it is 4 dimensional
                     # Seperates test and data intoM training, test, and validiation sets
                     #Normalizes x data                   
-                    if NNet_test == "LSTM":
+                    if NNet_test.find("LSTM") > -1:
                         if len(glVar.train_x.shape) <= 2: glVar.train_x = glVar.train_x.reshape(-1, glVar.train_x.shape[1], 1)/np.max(glVar.train_x)
                         glVar.test_x = glVar.test_x.reshape(-1, glVar.test_x.shape[1], 1)/np.max(glVar.test_x)
                         glVar.val_x = glVar.val_x.reshape(-1, glVar.val_x.shape[1], 1)/np.max(glVar.val_x)
