@@ -6,15 +6,15 @@ School: Rutger University
 Advisor: Rchard Martin
 Python Version: Python3
 
-This code sequeces to through neural netww
+This code sequeces to through neural network for modulation recognition
 """
 #Imports necessary libraries 
-import numpy as np, os, scipy, glob
+import numpy as np, os, glob
 from datetime import datetime
 import sys, ntpath, time
 import pandas as pd
 from argparse import ArgumentParser
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from keras import backend as K 
 np.random.seed(1200)  # For reproducibility
 
@@ -28,7 +28,8 @@ import NN_CNN_b19 as NN_CAT_CONV
 import NN_BIN_b14 as NN_BIN
 import NN_AE_b14 as NN_AE
 import NN_ANOM_b15 as NN_ANOM
-import NN_LSTM_b8 as NN_LSTM
+import NN_LSTM_b7 as NN_LSTM
+import NN_LSTM_64L as NN_LSTM_2
 import NN_Simple_b3 as NN_SIMPLE
 import NN_matched_filter_b13 as MATCH
 # Imports "normalized"NN files
@@ -126,12 +127,14 @@ def argument_parser():
         FCN --> Fully Connected \n
         CNN --> Convolutional \n
         AE --> Autoencoder \n
+        LSTM --> LSTM with 32 filters  \n
         AMOM --> Anomaly Detector \n
         SIMP--> Simple \n
         BIN --> Binary Classifier \n
         FCN2 --> Normalized Fully Connected  \n
         CNN2 --> Normalized Convolutional \n
         AE2 --> Normalized Autoencoder \n
+        LSTM2 --> LSTM with 32 filters  \n
         Options [default=%(default)r]'''
         )
     parser.add_argument(
@@ -324,6 +327,7 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
         elif NNet_test.upper() == "CNN2": NNet = NN_CAT_CONV_2.NN()
         elif NNet_test.upper() == "BIN2": NNet = NN_BIN_2.NN()
         elif NNet_test.upper() == "AE2": NNet = NN_AE_2.NN()
+        elif NNet_test.upper() == "LSTM2": NNet = NN_LSTM_2.NN()
         else: NNet = NN_CAT.NN()
         
         glVar.NN_type = NNet.getType()    
