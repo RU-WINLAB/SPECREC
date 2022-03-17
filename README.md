@@ -40,9 +40,10 @@ Contains containers to run the specified code. <br />
 
 ################################################################################################################################################################ <br />
 
-HOW TO RUN THE CODE
-The instructinos for running the code are in the links below:
+HOW TO RUN THE CODE <br />
+The instructinos for running the code are in the links below: <br /> <br />
 
-NN_Mod_Rec
-https://docs.google.com/document/d/1K1mGrUx9OouTBHClRCJDQkvCKi9lZytizHz_U366aBU/edit?usp=sharing 
+NN_Mod_Rec <br />
+https://docs.google.com/document/d/1K1mGrUx9OouTBHClRCJDQkvCKi9lZytizHz_U366aBU/edit?usp=sharing <br /> <br />
+################################################################################################################################################################ <br />
 
