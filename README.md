@@ -1,6 +1,6 @@
 # SPECREC
 
-################################################################################################################################################################<br />
+##############################################################################<br />
 
 This repository is for code used to evaluate various neural networks for the purpose of modulation recognition.  All tests were perfomed in association with WINLAB and Rutgers University. The research was performed between 2019 and 2022.    
 
