@@ -39,3 +39,10 @@ Containers <br />
 Contains containers to run the specified code. <br />
 
 ################################################################################################################################################################ <br />
+
+HOW TO RUN THE CODE
+The instructinos for running the code are in the links below:
+
+NN_Mod_Rec
+https://docs.google.com/document/d/1K1mGrUx9OouTBHClRCJDQkvCKi9lZytizHz_U366aBU/edit?usp=sharing 
+
