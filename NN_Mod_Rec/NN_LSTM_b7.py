@@ -18,6 +18,7 @@ from tensorflow.keras.models import load_model
 #Sets up things for the environment
 os.environ["KERAS_BACKEND"] = "tensorflow"
 os.environ["TENSORFLOW_FLAGS"] = "device=gpu%d" % (0)
+#os.environ["CUDA_VISIBLE_DEVICES"] = "-1" #Forces program to ignore GPU
 
 from numpy.random import seed
 seed(1337)

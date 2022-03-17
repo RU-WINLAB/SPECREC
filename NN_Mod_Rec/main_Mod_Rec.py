@@ -29,14 +29,14 @@ import NN_BIN_b14 as NN_BIN
 import NN_AE_b14 as NN_AE
 import NN_ANOM_b15 as NN_ANOM
 import NN_LSTM_b7 as NN_LSTM
-import NN_LSTM_64L as NN_LSTM_2
+import NN_LSTM_64L as NN_LSTM_64
 import NN_Simple_b3 as NN_SIMPLE
 import NN_matched_filter_b13 as MATCH
 # Imports "normalized"NN files
-import NN_FCNN_norm_b1 as NN_CAT_2
-import NN_CNN_norm_b1 as NN_CAT_CONV_2
-import NN_BIN_norm_b1 as NN_BIN_2
-import NN_AE_norm_b1 as NN_AE_2
+import NN_FCNN_norm_b1 as NN_CAT_norm
+import NN_CNN_norm_b1 as NN_CAT_CONV_norm
+import NN_BIN_norm_b1 as NN_BIN_norm
+import NN_AE_norm_b1 as NN_AE_norm
 # Imports additional files
 import compare_prediction_actual_r4 as conf_mat
 import read_binary_r1 as read_binary_file
@@ -131,10 +131,10 @@ def argument_parser():
         AMOM --> Anomaly Detector \n
         SIMP--> Simple \n
         BIN --> Binary Classifier \n
-        FCN2 --> Normalized Fully Connected  \n
-        CNN2 --> Normalized Convolutional \n
-        AE2 --> Normalized Autoencoder \n
-        LSTM2 --> LSTM with 64 filters  \n
+        FCN-N --> Normalized Fully Connected  \n
+        CNN-N --> Normalized Convolutional \n
+        AE-N --> Normalized Autoencoder \n
+        LSTM-64 --> LSTM with 64 filters  \n
         Options [default=%(default)r]'''
         )
     parser.add_argument(
@@ -186,6 +186,10 @@ def argument_parser():
         "--range-test", dest="range_test", type=float, nargs='+',
         default= [-1000.0, 1000.0],
         help="Range of values in test data to be included [default=%(default)r]")
+    parser.add_argument(
+        "--file-id", dest="file_id", type=str,
+        default= "",
+        help="Special identifier to be included at the end of the file name [default=%(default)r]")
     
     parser.add_argument(
         "--col-param", dest="col_param", type=str, 
@@ -323,17 +327,17 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
         elif NNet_test.upper() == "LSTM": NNet = NN_LSTM.NN()
         elif NNet_test.upper() == "SIMPLE": NNet = NN_SIMPLE.NN()
         elif NNet_test.upper() == "MATCH": NNet = MATCH.NN()
-        elif NNet_test.upper() == "FCN2": NNet = NN_CAT_2.NN()
-        elif NNet_test.upper() == "CNN2": NNet = NN_CAT_CONV_2.NN()
-        elif NNet_test.upper() == "BIN2": NNet = NN_BIN_2.NN()
-        elif NNet_test.upper() == "AE2": NNet = NN_AE_2.NN()
-        elif NNet_test.upper() == "LSTM2": NNet = NN_LSTM_2.NN()
+        elif NNet_test.upper() == "FCN-N": NNet = NN_CAT_norm.NN()
+        elif NNet_test.upper() == "CNN-N": NNet = NN_CAT_CONV_norm.NN()
+        elif NNet_test.upper() == "BIN-N": NNet = NN_BIN_norm.NN()
+        elif NNet_test.upper() == "AE-N": NNet = NN_AE_norm.NN()
+        elif NNet_test.upper() == "LSTM-64": NNet = NN_LSTM_64.NN()
         else: NNet = NN_CAT.NN()
         
         glVar.NN_type = NNet.getType()    
         NNet.__init__
     
-        if glVar.NN_type == "BIN" or glVar.NN_type == "ANOM" :
+        if glVar.NN_type.find("BIN") > -1 or glVar.NN_type == "ANOM" :
             #Gets list unique list of modulation types
             #modulations = ["bpsk", "qpsk", "16qam", "8psk"]
             modulations = set(glVar.testData[glVar.col_mods].values)
@@ -448,6 +452,9 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
                                 time_OVH = np.round(time.time() -glVar.time_start_OVH - time_NN, 2)
                              
                                 if writeData:
+                                    if len(options.file_id) > 0:  
+                                        file_results = "Data/Results/" + glVar.dateCode + "_Test_ " + options.file_id +  ".csv"
+                                    else: file_results = "Data/Results/" + glVar.dateCode + "_Test.csv"
                                     pd.DataFrame({
                                             #"Datatype" : [i], 
                                             glVar.col_param: [np.round(np.mean(glVar.param_value), 2)],
@@ -478,7 +485,7 @@ def runTest(dateCode, datapoints = 100, samples = 200, writeData = True,
                                             "Param Train Max": [options.range_train[1]],
                                             "Param Test Min": [options.range_test[0]],
                                             "Param Test Max": [options.range_test[1]],
-                                            }).to_csv("Data/Results/" + glVar.dateCode + "_Test.csv", mode = 'a', 
+                                            }).to_csv(file_results, mode = 'a', 
                                                       header = glVar.header)
                                     glVar.header = False
                                     glVar.time_data_collect = 0
