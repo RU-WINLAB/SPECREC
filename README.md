@@ -1,17 +1,17 @@
 # SPECREC
 
-########################################################################################<<br />
+########################################################################################<<br /> <br />
 
 This repository is for code used to evaluate various neural networks for the purpose of modulation recognition.  All tests were perfomed in association with WINLAB and Rutgers University. The research was performed between 2019 and 2022.    
 
-########################################################################################<<br />br />
+########################################################################################<<br /> <br />
 
 The results from this project are discussed in the following publications: <br />
 
 1) Burns, Tina, L., et. al. "Evaluating Deep Learning Networks for Modulation Recognition ". IEEE International Symposium on Dynamic Spectrum Access Networks (DYSPAN). Dec. 2021 <br />
 2) Burns, Tina, L., et. al. "Synthetic Wireless Signal Generation for Neural Network Algorithms". IEEE Conference on Standards for Communications and Networking (CSCN). Dec. 2021 <br />
 
-########################################################################################<<br />
+########################################################################################<<br /> <br />
 The contributors to this project include:<br />
 Tina L. Burns <br />
 Richard P. Martin <br />
